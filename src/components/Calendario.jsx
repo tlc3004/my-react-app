@@ -1,26 +1,18 @@
-import { useState } from 'react'
-import { DayPicker } from 'react-day-picker'
-import 'react-day-picker/dist/style.css'
+import React from "react";
 
-export default function Calendario() {
-  const [selected, setSelected] = useState()
-
+export default function Calendario({ fechaSeleccionada, onChangeFecha }) {
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
-        Selecciona una fecha
-      </h2>
-      <DayPicker 
-        mode="single" 
-        selected={selected} 
-        onSelect={setSelected} 
-        className="bg-white dark:bg-gray-900 rounded-lg"
+    <div className="max-w-sm mx-auto p-4">
+      <label htmlFor="fecha" className="block mb-2 font-semibold">
+        Selecciona una fecha:
+      </label>
+      <input
+        type="date"
+        id="fecha"
+        value={fechaSeleccionada}
+        onChange={(e) => onChangeFecha(e.target.value)}
+        className="w-full p-2 border rounded dark:bg-gray-700 dark:text-gray-200"
       />
-      {selected && (
-        <p className="mt-4 text-gray-700 dark:text-gray-300">
-          Fecha seleccionada: {selected.toLocaleDateString()}
-        </p>
-      )}
     </div>
-  )
+  );
 }

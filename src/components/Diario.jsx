@@ -1,47 +1,139 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react";
 
-function Diario() {
-  const [nota, setNota] = useState('')
-  const [fecha, setFecha] = useState(new Date().toISOString().slice(0, 10))
-  const [guardado, setGuardado] = useState(false)
+const fuentes = [
+  { label: "Sans Serif", value: "Arial, sans-serif" },
+  { label: "Serif", value: "Georgia, serif" },
+  { label: "Monospace", value: "'Courier New', monospace" },
+  { label: "Cursive", value: "'Comic Sans MS', cursive, sans-serif" },
+];
+
+export default function Diario({ fecha }) {
+  const [texto, setTexto] = useState("");
+  const [colorFondo, setColorFondo] = useState("#ffffff");
+  const [colorBorde, setColorBorde] = useState("#000000");
+  const [colorLetra, setColorLetra] = useState("#000000");
+  const [tamLetra, setTamLetra] = useState("16");
+  const [fuente, setFuente] = useState(fuentes[0].value);
 
   useEffect(() => {
-    const savedNota = localStorage.getItem(`nota-${fecha}`)
-    if (savedNota) setNota(savedNota)
-    else setNota('')
-    setGuardado(false)
-  }, [fecha])
+    setTexto(localStorage.getItem(`diario-texto-${fecha}`) || "");
+    setColorFondo(localStorage.getItem(`diario-fondo-${fecha}`) || "#ffffff");
+    setColorBorde(localStorage.getItem(`diario-borde-${fecha}`) || "#000000");
+    setColorLetra(localStorage.getItem(`diario-letra-color-${fecha}`) || "#000000");
+    setTamLetra(localStorage.getItem(`diario-letra-tam-${fecha}`) || "16");
+    setFuente(localStorage.getItem(`diario-letra-fuente-${fecha}`) || fuentes[0].value);
+  }, [fecha]);
 
-  const guardarNota = () => {
-    localStorage.setItem(`nota-${fecha}`, nota)
-    setGuardado(true)
-    setTimeout(() => setGuardado(false), 2000)
-  }
+  const guardarTexto = (value) => {
+    setTexto(value);
+    localStorage.setItem(`diario-texto-${fecha}`, value);
+  };
+
+  const guardarColorFondo = (color) => {
+    setColorFondo(color);
+    localStorage.setItem(`diario-fondo-${fecha}`, color);
+  };
+
+  const guardarColorBorde = (color) => {
+    setColorBorde(color);
+    localStorage.setItem(`diario-borde-${fecha}`, color);
+  };
+
+  const guardarColorLetra = (color) => {
+    setColorLetra(color);
+    localStorage.setItem(`diario-letra-color-${fecha}`, color);
+  };
+
+  const guardarTamLetra = (tam) => {
+    setTamLetra(tam);
+    localStorage.setItem(`diario-letra-tam-${fecha}`, tam);
+  };
+
+  const guardarFuente = (fuente) => {
+    setFuente(fuente);
+    localStorage.setItem(`diario-letra-fuente-${fecha}`, fuente);
+  };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Diario para {fecha}</h2>
-      <input 
-        type="date" 
-        value={fecha} 
-        onChange={e => setFecha(e.target.value)} 
-        className="mb-4 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
-      />
-      <textarea 
-        className="w-full h-56 p-4 border border-gray-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
-        value={nota} 
-        onChange={e => setNota(e.target.value)}
-        placeholder="Escribe tu día aquí..."
-      />
-      <button 
-        onClick={guardarNota} 
-        className="w-full bg-blue-600 text-white font-semibold py-3 rounded hover:bg-blue-700 transition-colors"
-      >
-        Guardar Nota
-      </button>
-      {guardado && <p className="mt-3 text-green-600 font-medium">¡Nota guardada con éxito! ✅</p>}
-    </div>
-  )
-}
+    <div
+      className="p-4 min-h-[300px] max-w-4xl mx-auto rounded-lg shadow-lg"
+      style={{
+        backgroundColor: colorFondo,
+        border: `6px dashed ${colorBorde}`,
+        boxShadow: `0 0 10px ${colorBorde}`,
+        fontFamily: fuente,
+        color: colorLetra,
+        fontSize: `${tamLetra}px`,
+      }}
+    >
+      <h2 className="text-xl font-bold mb-4">Diario para {fecha}</h2>
 
-export default Diario
+      <div className="mb-4 flex flex-wrap gap-6">
+        <div>
+          <label className="block mb-1 font-semibold">Color de fondo</label>
+          <input
+            type="color"
+            value={colorFondo}
+            onChange={(e) => guardarColorFondo(e.target.value)}
+            className="w-16 h-8 cursor-pointer border rounded"
+          />
+        </div>
+        <div>
+          <label className="block mb-1 font-semibold">Color del borde</label>
+          <input
+            type="color"
+            value={colorBorde}
+            onChange={(e) => guardarColorBorde(e.target.value)}
+            className="w-16 h-8 cursor-pointer border rounded"
+          />
+        </div>
+        <div>
+          <label className="block mb-1 font-semibold">Color de letra</label>
+          <input
+            type="color"
+            value={colorLetra}
+            onChange={(e) => guardarColorLetra(e.target.value)}
+            className="w-16 h-8 cursor-pointer border rounded"
+          />
+        </div>
+        <div>
+          <label className="block mb-1 font-semibold">Tamaño de letra</label>
+          <input
+            type="number"
+            min="12"
+            max="36"
+            value={tamLetra}
+            onChange={(e) => guardarTamLetra(e.target.value)}
+            className="w-16 p-1 border rounded"
+          />
+        </div>
+        <div>
+          <label className="block mb-1 font-semibold">Fuente</label>
+          <select
+            value={fuente}
+            onChange={(e) => guardarFuente(e.target.value)}
+            className="p-1 border rounded"
+          >
+            {fuentes.map(({ label, value }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <textarea
+        className="w-full h-64 p-3 border rounded resize-none"
+        value={texto}
+        onChange={(e) => guardarTexto(e.target.value)}
+        placeholder="Escribe aquí lo que quieras..."
+        style={{
+          fontFamily: fuente,
+          color: colorLetra,
+          fontSize: `${tamLetra}px`,
+        }}
+      />
+    </div>
+  );
+}

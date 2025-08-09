@@ -1,11 +1,18 @@
 import React, { useState } from 'react'
 import Diario from './components/Diario'
 import Calendario from './components/Calendario'
+
 function App() {
-  const [ventana, setVentana] = useState('diario') // 'diario' o 'calendario'
+  const [ventana, setVentana] = useState('calendario') // inicio en calendario para elegir fecha
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date().toISOString().slice(0, 10))
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-6 flex flex-col items-center">
+    <div
+      className="min-h-screen p-6 flex flex-col items-center"
+      style={{ 
+        background: 'linear-gradient(135deg, #ff00cc 0%, #333399 50%, #00ffcc 100%)' 
+      }}
+    >
       <header className="mb-6 text-center">
         <h1 className="text-3xl font-bold text-blue-700 dark:text-blue-400 mb-1">
           Diario y Calendario
@@ -39,8 +46,19 @@ function App() {
       </nav>
 
       <main className="w-full max-w-3xl">
-        {ventana === 'diario' && <Diario />}
-        {ventana === 'calendario' && <Calendario />}
+        {ventana === 'diario' && <Diario fecha={fechaSeleccionada} />}
+        {ventana === 'calendario' && (
+          <Calendario 
+            fechaSeleccionada={fechaSeleccionada} 
+            onSelect={(date) => {
+              if (date) {
+                const isoDate = date.toISOString().slice(0, 10)
+                setFechaSeleccionada(isoDate)
+                setVentana('diario') // cambiar a diario al seleccionar fecha
+              }
+            }} 
+          />
+        )}
       </main>
     </div>
   )
